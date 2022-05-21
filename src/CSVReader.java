@@ -19,6 +19,9 @@ public class CSVReader {
         }
         HashMap<String,Integer> wonMatches = new HashMap<String, Integer>();
         int winCount;
+        HashMap<String,Integer> wonToss = new HashMap<String, Integer>();
+        int tossCount;
+
 
         try {
             BufferedReader br = new BufferedReader(new FileReader(MatchesPath));
@@ -43,6 +46,17 @@ public class CSVReader {
                     count++;
                     wonMatches.put(values[10], count);
                 }
+
+                // Logic for Scenario 5
+                if(!wonToss.containsKey(values[6])){
+                    tossCount = 1;
+                    wonToss.put(values[6], tossCount);
+                } else{
+                    int count = wonToss.get(values[6]);
+                    count++;
+                    wonToss.put(values[6], count);
+                }
+
             }
         } catch (FileNotFoundException e) {
             throw new RuntimeException(e);
@@ -66,7 +80,6 @@ public class CSVReader {
         String line2 = "";
 
         HashMap<String,Integer> ecoBaller = new HashMap<String,Integer>();
-        //int ecoCount = 0;
         HashMap<String,Integer> extraRun = new HashMap<String, Integer>();
         // int runCount = 0;
         // HashMap<String,Integer> ballerOvers = new HashMap<String, Integer>();
@@ -122,11 +135,13 @@ public class CSVReader {
         }
 
         System.out.println();
+
         System.out.println("------Scenario 3------");
         System.out.println(extraRun);
         System.out.println("----------------------");
 
         System.out.println();
+
         System.out.println("------Scenario 4------");
         //System.out.println(ecoBaller);
         int minValue = Collections.min(ecoBaller.values());
@@ -137,6 +152,13 @@ public class CSVReader {
                 break;
             }
         }
+        System.out.println("----------------------");
+
+        System.out.println();
+
+        System.out.println("------Scenario 5------");
+        System.out.println("Number of toss won by each team in all years of IPL");
+        System.out.println(wonToss);
         System.out.println("----------------------");
 
 
