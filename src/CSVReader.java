@@ -2,7 +2,9 @@ import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.Map;
 
 import static java.lang.Integer.parseInt;
 
@@ -11,12 +13,12 @@ public class CSVReader {
         String DeliveriesPath = "src/Resources/deliveries.csv";
         String MatchesPath = "src/Resources/matches.csv";
         String line1 = "";
-        int years[] = new int[10];
+        int[] years = new int[10];
         for(int i=0;i<10;i++){
             years[i] = 0;
         }
         HashMap<String,Integer> wonMatches = new HashMap<String, Integer>();
-        int winCount = 0;
+        int winCount;
 
         try {
             BufferedReader br = new BufferedReader(new FileReader(MatchesPath));
@@ -40,7 +42,6 @@ public class CSVReader {
                     int count = wonMatches.get(values[10]);
                     count++;
                     wonMatches.put(values[10], count);
-                    count=0;
                 }
             }
         } catch (FileNotFoundException e) {
@@ -64,8 +65,12 @@ public class CSVReader {
 
         String line2 = "";
 
+        HashMap<String,Integer> ecoBaller = new HashMap<String,Integer>();
+        //int ecoCount = 0;
         HashMap<String,Integer> extraRun = new HashMap<String, Integer>();
-        int runCount = 0;
+        // int runCount = 0;
+        // HashMap<String,Integer> ballerOvers = new HashMap<String, Integer>();
+
 
         try {
             BufferedReader rdr = new BufferedReader(new FileReader(DeliveriesPath));
@@ -77,6 +82,8 @@ public class CSVReader {
                     continue;
                 }
                 String[] val = line2.split(",");
+
+                // Logic for scenario 3
                 if(parseInt(val[0]) > 576 && parseInt(val[0]) <= 636){
                     if(!extraRun.containsKey(val[2])){
                         int run = parseInt(val[16]);
@@ -85,9 +92,27 @@ public class CSVReader {
                         int counter = extraRun.get(val[2]);
                         counter = counter + parseInt(val[16]);
                         extraRun.put(val[2],counter);
-                        counter= 0;
                     }
-
+                }
+                //int ballCount=0;
+                // Logic for scenario 4
+                if(parseInt(val[0]) >= 518 && parseInt(val[0]) <= 576){
+                    if(!ecoBaller.containsKey(val[8])){
+                        int eco = parseInt(val[17]);
+                        ecoBaller.put(val[8],eco);
+                    }else {
+                        int ecoCount = ecoBaller.get(val[8]);
+                        ecoCount = ecoCount + parseInt(val[17]);
+                        ecoBaller.put(val[8],ecoCount);
+                    }
+//                    if(!ballerOvers.containsKey(val[8])){
+//                        int ball =  1;
+//                        ballerOvers.put(val[8],ball);
+//                    } else {
+//                        int ballCount=ballerOvers.get(val[8]);
+//                        ballCount = ballCount + 1;
+//                        ballerOvers.put(val[8],ballCount);
+//                    }
                 }
             }
         } catch (FileNotFoundException e) {
@@ -96,8 +121,22 @@ public class CSVReader {
             throw new RuntimeException(e);
         }
 
+        System.out.println();
         System.out.println("------Scenario 3------");
         System.out.println(extraRun);
+        System.out.println("----------------------");
+
+        System.out.println();
+        System.out.println("------Scenario 4------");
+        //System.out.println(ecoBaller);
+        int minValue = Collections.min(ecoBaller.values());
+        //System.out.println(ballerOvers);
+        for(Map.Entry<String, Integer> entry: ecoBaller.entrySet()) {
+            if(entry.getValue() == minValue) {
+                System.out.println("Top Economical baller is " + entry.getKey());
+                break;
+            }
+        }
         System.out.println("----------------------");
 
 
