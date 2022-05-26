@@ -106,7 +106,7 @@ public class Main {
             String line = "";
             int iteration = 0;
             while ((line = reader.readLine()) != null) {
-                if(iteration == 0){
+                if (iteration == 0) {
                     iteration++;
                     continue;
                 }
@@ -132,37 +132,36 @@ public class Main {
 
                 matchData.add(match);
             }
-        } catch (IOException e){
+        } catch (IOException e) {
             throw new RuntimeException(e);
         }
         return matchData;
     }
 
     private static void findNumberOfMatchesPlayedPerYearOfAllYears(List<Match> matches) {
-        int[] years = new int[10];
-        for(int i=0;i<10;i++){
-            years[i] = 0;
-        }
+        Map<Integer, Integer> matchesPerYear = new TreeMap<>();
+
         for (Match match : matches) {
-            int index = (match.getSeason()) - 2008;
-            years[index]++;
+            if (!matchesPerYear.containsKey(match.getSeason())) {
+                matchesPerYear.put(match.getSeason(), 1);
+            } else {
+                matchesPerYear.put(match.getSeason(), matchesPerYear.get(match.getSeason()) + 1);
+            }
         }
-        System.out.println("------Scenario 1------");
+
         System.out.println("Matches played per year");
         System.out.println();
-        for(int i=0;i<10;i++){
-            System.out.println("Matches played in " + (i+2008)+ " = " + years[i]);
-        }
+        matchesPerYear.forEach((key, value) -> System.out.println("Matches won in year " + key + " : " + value));
         System.out.println("----------------------");
     }
 
     private static void findNumberOfMatchesWonPerTeamInAllSeasons(List<Match> matches) {
-        Map<String,Integer> wonMatches = new HashMap<String, Integer>();
+        Map<String, Integer> wonMatches = new HashMap<>();
         int winCount;
 
-        for(Match match : matches){
-            if(match.getResult().equals("normal")){
-                if(!wonMatches.containsKey(match.getWinner())){
+        for (Match match : matches) {
+            if (match.getResult().equals("normal")) {
+                if (!wonMatches.containsKey(match.getWinner())) {
                     wonMatches.put(match.getWinner(), 1);
                 } else {
                     winCount = wonMatches.get(match.getWinner());
@@ -171,9 +170,8 @@ public class Main {
                 }
             }
         }
-        System.out.println();
 
-        System.out.println("------Scenario 2------");
+        System.out.println();
         System.out.println("Number of Matches won by every team.");
         System.out.println();
         wonMatches.forEach((key, value) -> {
@@ -184,10 +182,10 @@ public class Main {
 
     private static void findExtraRunsConcededPerTeamIn2016(List<Match> matches, List<Delivery> deliveries) {
         Map<String, Integer> extraRuns = new HashMap<>();
-        for(Match match : matches){
-            if(match.getSeason() == 2016){
-                for(Delivery delivery : deliveries){
-                    if(delivery.getId() == match.getId()) {
+        for (Match match : matches) {
+            if (match.getSeason() == 2016) {
+                for (Delivery delivery : deliveries) {
+                    if (delivery.getId() == match.getId()) {
                         if (!extraRuns.containsKey(delivery.getBowlingTeam())) {
                             extraRuns.put(delivery.getBowlingTeam(), delivery.getExtraRuns());
                         } else {
@@ -199,9 +197,8 @@ public class Main {
                 }
             }
         }
-        System.out.println();
 
-        System.out.println("------Scenario 3------");
+        System.out.println();
         System.out.println("Extra runs conceded per team in 2016");
         System.out.println();
         extraRuns.forEach((key, value) -> System.out.println(key + " : " + value));
@@ -213,18 +210,18 @@ public class Main {
         Map<String, Float> oversPerBowler = new HashMap<>();
         TreeMap<Float, String> economyRatePerBowler = new TreeMap<>();
 
-        for(Match match: matches){
-            if(match.getSeason() == 2015){
-                for(Delivery delivery : deliveries){
-                    if(delivery.getId() == match.getId()){
-                        if(!runsPerBowler.containsKey(delivery.getBowler())){
+        for (Match match : matches) {
+            if (match.getSeason() == 2015) {
+                for (Delivery delivery : deliveries) {
+                    if (delivery.getId() == match.getId()) {
+                        if (!runsPerBowler.containsKey(delivery.getBowler())) {
                             runsPerBowler.put(delivery.getBowler(), delivery.getTotalRuns());
                         } else {
                             int runs = runsPerBowler.get(delivery.getBowler());
                             runs = runs + delivery.getTotalRuns();
                             runsPerBowler.put(delivery.getBowler(), runs);
                         }
-                        if(!oversPerBowler.containsKey(delivery.getBowler())){
+                        if (!oversPerBowler.containsKey(delivery.getBowler())) {
                             oversPerBowler.put(delivery.getBowler(), 1f);
                         } else {
                             float balls = oversPerBowler.get(delivery.getBowler());
@@ -237,24 +234,22 @@ public class Main {
         }
 
         oversPerBowler.forEach((key, value) -> {
-            oversPerBowler.put(key,(value/6));
+            oversPerBowler.put(key, (value / 6));
         });
 
-        for(Match match : matches){
-            if(match.getSeason() == 2015){
-                for(Delivery delivery : deliveries){
-                    if(delivery.getId() == match.getId()){
-                        if(!economyRatePerBowler.containsValue(delivery.getBowler())){
-                            float economyRate = runsPerBowler.get(delivery.getBowler())/oversPerBowler.get(delivery.getBowler());
+        for (Match match : matches) {
+            if (match.getSeason() == 2015) {
+                for (Delivery delivery : deliveries) {
+                    if (delivery.getId() == match.getId()) {
+                        if (!economyRatePerBowler.containsValue(delivery.getBowler())) {
+                            float economyRate = runsPerBowler.get(delivery.getBowler()) / oversPerBowler.get(delivery.getBowler());
                             economyRatePerBowler.put(economyRate, delivery.getBowler());
                         }
                     }
                 }
             }
         }
-        System.out.println();
-        System.out.println("------Scenario 4------");
-        System.out.println("Find the most economical bowler of 2015 IPL");
+
         System.out.println();
         System.out.println("Most economical bowler of 2015 IPL is :");
         System.out.println(economyRatePerBowler.firstEntry().getValue() + " with economy rate of " + economyRatePerBowler.firstKey());
@@ -264,8 +259,8 @@ public class Main {
     private static void findNumberOfTossWonByEachTeam(List<Match> matches) {
         Map<String, Integer> wonTossMap = new HashMap<>();
         int tossWinnerCounter;
-        for(Match match: matches){
-            if(!wonTossMap.containsKey(match.getTossWinner())){
+        for (Match match : matches) {
+            if (!wonTossMap.containsKey(match.getTossWinner())) {
                 wonTossMap.put(match.getTossWinner(), 1);
             } else {
                 tossWinnerCounter = wonTossMap.get(match.getTossWinner());
@@ -273,9 +268,8 @@ public class Main {
                 wonTossMap.put(match.getTossWinner(), tossWinnerCounter);
             }
         }
-        System.out.println();
 
-        System.out.println("------Scenario 5------");
+        System.out.println();
         System.out.println("Number of times toss won by each team");
         System.out.println();
         wonTossMap.forEach((key, value) -> System.out.println(key + " : " + value));
